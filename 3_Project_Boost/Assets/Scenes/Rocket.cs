@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class Rocket : MonoBehaviour
 {
+    [SerializeField] float rcsTrust = 100f;
+    [SerializeField] float MainTrust = 100f;
+
     Rigidbody rigidBody;
     AudioSource audiosource;
     // Start is called before the first frame update
@@ -17,14 +20,44 @@ public class Rocket : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        processInput();
+        Trust();
+        Rotate();
+    }
+    void OnCollisionEnter(Collision collision)
+    {
+        switch (collision.gameObject.tag)
+        {
+            case "Friendly":
+                print("Ok");
+                break;
+            default:
+                print("Dead");
+                break;
+        }
     }
 
-    private void processInput()
+    private void Rotate()
+    {
+        rigidBody.freezeRotation = true;
+        
+        float rotationTrustperFrame = rcsTrust * Time.deltaTime;
+        if (Input.GetKey(KeyCode.A))
+        {
+            transform.Rotate(Vector3.forward * rotationTrustperFrame);
+        }
+        else if (Input.GetKey(KeyCode.D))
+        {
+            transform.Rotate(-Vector3.forward * rotationTrustperFrame);
+        }
+        rigidBody.freezeRotation = false;
+    }
+
+    private void Trust()
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            rigidBody.AddRelativeForce(Vector3.up);
+            float mainTrustperFrame = MainTrust * Time.deltaTime;
+            rigidBody.AddRelativeForce(Vector3.up * mainTrustperFrame);
             if (!audiosource.isPlaying) //if we will not keep then the audio will keep on playing.
             {
                 audiosource.Play();
@@ -34,14 +67,5 @@ public class Rocket : MonoBehaviour
         {
             audiosource.Stop();
         }
-        if (Input.GetKey(KeyCode.A))
-        {
-            transform.Rotate(Vector3.forward);
-        }
-        else if (Input.GetKey(KeyCode.D))
-        {
-            transform.Rotate(-Vector3.forward);
-        }
-        //audiosource.Stop();
     }
 }
