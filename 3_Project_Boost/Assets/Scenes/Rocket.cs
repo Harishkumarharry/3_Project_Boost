@@ -23,6 +23,7 @@ public class Rocket : MonoBehaviour
         Thrust();//To Move the Rocket in upward direction
         Rotate();//To rotate the ship in either cloclwise
     }
+
     void OnCollisionEnter(Collision collision)
     {
         switch (collision.gameObject.tag)
