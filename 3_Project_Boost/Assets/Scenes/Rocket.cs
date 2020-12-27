@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class Rocket : MonoBehaviour
 {
-    [SerializeField] float rcsTrust = 100f;
-    [SerializeField] float MainTrust = 100f;
+    [SerializeField] float rcsThrust = 100f;
+    [SerializeField] float mainThrust = 100f;
 
-    Rigidbody rigidBody;
+    Rigidbody rigidBody; //Getting components added in unity to handle in code
     AudioSource audiosource;
     // Start is called before the first frame update
     void Start()
@@ -20,8 +20,8 @@ public class Rocket : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Trust();
-        Rotate();
+        Thrust();//To Move the Rocket in upward direction
+        Rotate();//To rotate the ship in either cloclwise
     }
     void OnCollisionEnter(Collision collision)
     {
@@ -40,7 +40,7 @@ public class Rocket : MonoBehaviour
     {
         rigidBody.freezeRotation = true;
         
-        float rotationTrustperFrame = rcsTrust * Time.deltaTime;
+        float rotationTrustperFrame = rcsThrust * Time.deltaTime;
         if (Input.GetKey(KeyCode.A))
         {
             transform.Rotate(Vector3.forward * rotationTrustperFrame);
@@ -52,11 +52,11 @@ public class Rocket : MonoBehaviour
         rigidBody.freezeRotation = false;
     }
 
-    private void Trust()
+    private void Thrust()
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            float mainTrustperFrame = MainTrust * Time.deltaTime;
+            float mainTrustperFrame = mainThrust * Time.deltaTime;
             rigidBody.AddRelativeForce(Vector3.up * mainTrustperFrame);
             if (!audiosource.isPlaying) //if we will not keep then the audio will keep on playing.
             {
