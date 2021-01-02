@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
 {
-    [SerializeField] float rcsThrust = 100f;
+    [SerializeField] float rcsThrust = 250f;
     [SerializeField] float mainThrust = 100f;
+
+    enum State { Alive, Dying, Transcending};
+    State state = State.Alive;
 
     Rigidbody rigidBody; //Getting components added in unity to handle in code
     AudioSource audiosource;
@@ -20,21 +21,40 @@ public class Rocket : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Thrust();//To Move the Rocket in upward direction
-        Rotate();//To rotate the ship in either cloclwise
+        if(state == State.Alive)
+        {
+            Thrust();//To Move the Rocket in upward direction
+            Rotate();//To rotate the ship in either cloclwise
+        }
     }
 
     void OnCollisionEnter(Collision collision)
     {
+        if (state != State.Alive) { return; } // Ignores collision when state is dead
+
         switch (collision.gameObject.tag)
         {
             case "Friendly":
-                print("Ok");
+                break;
+            case "Finish":
+                state = State.Transcending;
+                Invoke("LoadingNextLevel", 1f);
                 break;
             default:
-                print("Dead");
+                state = State.Dying;
+                Invoke("LoadingFirstLevel", 1f);
                 break;
         }
+    }
+
+    private void LoadingNextLevel()
+    {
+        SceneManager.LoadScene(1);
+    }
+
+    private void LoadingFirstLevel()
+    {
+        SceneManager.LoadScene(0);
     }
 
     private void Rotate()
